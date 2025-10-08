@@ -5,6 +5,7 @@
 import { validateFile } from './validator.js';
 import { parseDMN } from './dmn-parser.js';
 import { generateWordDocument, downloadDocument } from './word-generator.js';
+import { generateMarkdownDocument, downloadMarkdown } from './markdown-generator.js';
 
 // DOM elements
 const uploadArea = document.getElementById('uploadArea');
@@ -12,6 +13,13 @@ const fileInput = document.getElementById('fileInput');
 const statusArea = document.getElementById('statusArea');
 const statusIcon = document.getElementById('statusIcon');
 const statusMessage = document.getElementById('statusMessage');
+const actionButtons = document.getElementById('actionButtons');
+const downloadWordBtn = document.getElementById('downloadWordBtn');
+const downloadMarkdownBtn = document.getElementById('downloadMarkdownBtn');
+
+// Global state to store parsed data
+let currentDmnData = null;
+let currentFilename = '';
 
 // SVG icons
 const successIcon = `
@@ -81,6 +89,9 @@ async function processFile(file) {
   console.log('Processing file:', file.name);
 
   try {
+    // Hide action buttons
+    actionButtons.style.display = 'none';
+
     // Show validation status
     showStatus('Validating file...', 'loading');
 
@@ -102,26 +113,64 @@ async function processFile(file) {
     const dmnData = parseDMN(validation.doc);
     console.log('Parsed DMN data:', dmnData);
 
-    // Show generation status
-    showStatus('Generating Word document...', 'loading');
+    // Store parsed data and filename
+    currentDmnData = dmnData;
+    currentFilename = file.name.replace(/\.(dmn|xml)$/i, '');
 
-    // Generate Word document
-    const blob = await generateWordDocument(dmnData);
-
-    // Generate filename from metadata
-    const disease = dmnData.metadata.krankheit || 'document';
-    const sanitizedName = disease.replace(/[^a-z0-9äöüß]/gi, '_').toLowerCase();
-    const filename = `${sanitizedName}.docx`;
-
-    // Download document
-    downloadDocument(blob, filename);
-
-    // Show success
-    showStatus(`Successfully generated ${filename}`, 'success');
-    console.log('Document generated successfully');
+    // Show success and action buttons
+    showStatus('File processed successfully. Choose download format:', 'success');
+    actionButtons.style.display = 'flex';
+    console.log('Document parsed successfully');
 
   } catch (error) {
     console.error('Processing error:', error);
+    showStatus(`Error: ${error.message}`, 'error');
+    actionButtons.style.display = 'none';
+  }
+}
+
+/**
+ * Handles Word document download
+ */
+async function handleWordDownload() {
+  if (!currentDmnData) return;
+
+  try {
+    showStatus('Generating Word document...', 'loading');
+
+    const blob = await generateWordDocument(currentDmnData);
+    const filename = `${currentFilename}.docx`;
+
+    downloadDocument(blob, filename);
+
+    showStatus(`Successfully generated ${filename}`, 'success');
+    actionButtons.style.display = 'flex';
+
+  } catch (error) {
+    console.error('Word generation error:', error);
+    showStatus(`Error: ${error.message}`, 'error');
+  }
+}
+
+/**
+ * Handles Markdown document download
+ */
+function handleMarkdownDownload() {
+  if (!currentDmnData) return;
+
+  try {
+    showStatus('Generating Markdown document...', 'loading');
+
+    const markdown = generateMarkdownDocument(currentDmnData);
+    const filename = `${currentFilename}_tables.md`;
+
+    downloadMarkdown(markdown, filename);
+
+    showStatus(`Successfully generated ${filename}`, 'success');
+    actionButtons.style.display = 'flex';
+
+  } catch (error) {
+    console.error('Markdown generation error:', error);
     showStatus(`Error: ${error.message}`, 'error');
   }
 }
@@ -166,6 +215,10 @@ uploadArea.addEventListener('drop', (e) => {
   const file = e.dataTransfer.files[0];
   handleFileSelect(file);
 });
+
+// Action button listeners
+downloadWordBtn.addEventListener('click', handleWordDownload);
+downloadMarkdownBtn.addEventListener('click', handleMarkdownDownload);
 
 // Prevent default drag and drop behavior on the whole page
 document.addEventListener('dragover', (e) => {

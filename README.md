@@ -58,7 +58,9 @@ The production bundle will be created in the `dist/` directory and is optimized 
    - Dragging and dropping it onto the upload area
    - Clicking the upload area to browse for a file
 3. The file will be validated and processed
-4. A Word document will be automatically generated and downloaded
+4. Choose download format:
+   - **Download Word**: Full RKI Falldefinition document
+   - **Download Markdown (Tables Only)**: Decision tables only in markdown format
 
 ## DMN Structure Requirements
 

@@ -3,6 +3,37 @@
  */
 
 /**
+ * Calculates column widths for proper alignment
+ * @param {Array} headers - Column headers
+ * @param {Array} rules - Table rows
+ * @returns {Array} Width for each column
+ */
+function calculateColumnWidths(headers, rules) {
+  const widths = headers.map(h => h.length);
+
+  rules.forEach(rule => {
+    const cells = [...rule.inputEntries, ...rule.outputEntries];
+    cells.forEach((cell, i) => {
+      if (i < widths.length) {
+        widths[i] = Math.max(widths[i], cell.length);
+      }
+    });
+  });
+
+  return widths;
+}
+
+/**
+ * Pads text to a specific width
+ * @param {string} text - Text to pad
+ * @param {number} width - Target width
+ * @returns {string} Padded text
+ */
+function padCell(text, width) {
+  return text + ' '.repeat(Math.max(0, width - text.length));
+}
+
+/**
  * Generates markdown table from decision table
  * @param {Object} decisionTable - Decision table data
  * @param {string} decisionName - Name of the decision
@@ -23,16 +54,20 @@ function generateDecisionTableMarkdown(decisionTable, decisionName) {
     ...outputs.map(output => output.label || output.name || output.id)
   ];
 
-  markdown += '| ' + headers.join(' | ') + ' |\n';
-  markdown += '| ' + headers.map(() => '---').join(' | ') + ' |\n';
+  // Calculate column widths
+  const widths = calculateColumnWidths(headers, rules);
 
-  // Create data rows
+  // Create header row with padding
+  markdown += '| ' + headers.map((h, i) => padCell(h, widths[i])).join(' | ') + ' |\n';
+  markdown += '| ' + widths.map(w => '-'.repeat(w)).join(' | ') + ' |\n';
+
+  // Create data rows with padding
   rules.forEach(rule => {
     const cells = [
       ...rule.inputEntries,
       ...rule.outputEntries
     ];
-    markdown += '| ' + cells.join(' | ') + ' |\n';
+    markdown += '| ' + cells.map((c, i) => padCell(c, widths[i])).join(' | ') + ' |\n';
   });
 
   markdown += '\n';
@@ -41,12 +76,12 @@ function generateDecisionTableMarkdown(decisionTable, decisionName) {
 }
 
 /**
- * Generates markdown document from DMN data showing only decision tables
+ * Generates markdown document from DMN data showing all decision tables
  * @param {Object} dmnData - Parsed DMN data
  * @returns {string} Markdown formatted document
  */
 export function generateMarkdownDocument(dmnData) {
-  const { metadata, fallkategorien } = dmnData;
+  const { metadata, allDecisions } = dmnData;
 
   let markdown = '';
 
@@ -64,12 +99,25 @@ export function generateMarkdownDocument(dmnData) {
   }
   markdown += '\n';
 
-  // Fallklassifikation decision table
-  if (fallkategorien && fallkategorien.decisionTable) {
-    markdown += generateDecisionTableMarkdown(
-      fallkategorien.decisionTable,
-      fallkategorien.label || fallkategorien.name || 'Fallklassifikation'
-    );
+  // Export all decision tables
+  if (allDecisions && allDecisions.length > 0) {
+    allDecisions.forEach(decision => {
+      if (decision.decisionTable) {
+        markdown += generateDecisionTableMarkdown(
+          decision.decisionTable,
+          decision.label || decision.name || 'Decision'
+        );
+      }
+    });
+  } else {
+    // Fallback to just fallkategorien for backward compatibility
+    const { fallkategorien } = dmnData;
+    if (fallkategorien && fallkategorien.decisionTable) {
+      markdown += generateDecisionTableMarkdown(
+        fallkategorien.decisionTable,
+        fallkategorien.label || fallkategorien.name || 'Fallklassifikation'
+      );
+    }
   }
 
   return markdown;

@@ -278,7 +278,8 @@ export function parseDMN(doc) {
     gesetzlicheGrundlage: {
       meldepflicht: extractSection(doc, 'meldepflicht'),
       uebermittlung: extractSection(doc, 'uebermittlung')
-    }
+    },
+    allDecisions: decisions
   };
 
   console.log('parseDMN: Complete. Summary:', {

@@ -157,7 +157,7 @@ describe('DMN Parser', () => {
   });
 
   describe('parseDMN', () => {
-    it('should parse complete DMN document', () => {
+    it('should parse complete RKI DMN document', () => {
       const xml = `<?xml version="1.0"?>
         <definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd">
           <extensionElements>
@@ -168,8 +168,10 @@ describe('DMN Parser', () => {
               <rki:version>1.0</rki:version>
             </metadata>
           </extensionElements>
-          <inputData id="input1" name="Clinical Criteria"/>
-          <decision id="decision1" name="Case Classification">
+          <inputData id="kb" name="klinisches_bild" label="Klinisches Bild">
+            <documentation>Test klinisches bild</documentation>
+          </inputData>
+          <decision id="decision1" name="fallklassifikation">
             <decisionTable>
               <input id="in1" label="Clinical"/>
               <output id="out1" label="Result"/>
@@ -186,8 +188,9 @@ describe('DMN Parser', () => {
 
       expect(result.metadata).toBeDefined();
       expect(result.metadata.krankheit).toBe('Test Disease');
-      expect(result.inputData).toHaveLength(1);
-      expect(result.decisions).toHaveLength(1);
+      expect(result.klinischesBild).toBeDefined();
+      expect(result.klinischesBild.label).toBe('Klinisches Bild');
+      expect(result.fallkategorien).toBeDefined();
     });
   });
 });

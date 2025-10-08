@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd"
+             xmlns:rki="http://rki.de/dmn/extensions"
+             id="campylobacter_definition"
+             name="Campylobacter-Enteritis Fallklassifikation"
+             namespace="http://rki.de/dmn/campylobacter">
+
+  <extensionElements>
+    <metadata>
+      <rki:krankheit>Campylobacter-Enteritis</rki:krankheit>
+      <rki:erreger>Campylobacter spp., darmpathogen</rki:erreger>
+      <rki:stand>01.09.2023</rki:stand>
+      <rki:version>2025</rki:version>
+      <rki:inkubationszeit>1 - 10 Tage, gewöhnlich 2 - 5 Tage.</rki:inkubationszeit>
+    </metadata>
+  </extensionElements>
+
+  <inputData id="klinisches_bild" name="klinisches_bild" label="Klinisches Bild">
+    <documentation>Klinisches Bild einer akuten Campylobacter-Enteritis, definiert als mindestens eines der drei folgenden Kriterien:
+- Bauchschmerzen,
+- Durchfall,
+- Fieber
+ODER krankheitsbedingter Tod.</documentation>
+  </inputData>
+
+  <inputData id="labordiagnostik" name="labordiagnostik" label="Labordiagnostischer Nachweis">
+    <documentation>Positiver Befund mit mindestens einer der drei folgenden Methoden:
+[direkter Erregernachweis:]
+- Antigennachweis (z.B. mittels ELISA),
+- Erregerisolierung (kulturell),
+- Nukleinsäurenachweis (z.B. mittels PCR).</documentation>
+  </inputData>
+
+  <inputData id="zusatzinformation" name="zusatzinformation" label="Zusatzinformation">
+    <documentation>- Eine Kultivierung des Erregers und die Speziesbestimmung ist anzustreben.
+- Das Ergebnis der Speziesbestimmung sollte übermittelt werden.</documentation>
+  </inputData>
+
+  <inputData id="epidemiologische_bestaetigung" name="epidemiologische_bestaetigung" label="Epidemiologische Bestätigung">
+    <documentation>Epidemiologische Bestätigung, definiert als mindestens einer der vier folgenden Nachweise unter Berücksichtigung der Inkubationszeit:
+• epidemiologischer Zusammenhang mit einer labordiagnostisch nachgewiesenen Infektion beim Menschen durch
+  - Mensch-zu-Mensch-Übertragung ODER
+  - gemeinsame Expositionsquelle (z.B. Badegewässer und Wasser aus Bädern, Tierkontakt, Lebensmittel),
+• Baden in einem labordiagnostisch nachgewiesen kontaminierten Gewässer oder Schwimm- oder Badebecken,
+• Kontakt mit einem labordiagnostisch nachgewiesen infizierten Tier oder seinen Ausscheidungen oder Verzehr seiner Produkte (z.B. Rohmilch, Fleisch),
+• Verzehr eines Lebensmittels (inkl. Trinkwasser), in dessen Resten Campylobacter spp. labordiagnostisch nachgewiesen wurde.</documentation>
+  </inputData>
+
+  <decision id="fallklassifikation" name="fallklassifikation" label="Fallklassifikation">
+    <documentation>Kategorien für die Übermittlung an das RKI</documentation>
+    <decisionTable>
+      <input id="klinisch" label="Klinisches Bild">
+        <inputExpression><text>klinisch</text></inputExpression>
+      </input>
+      <input id="labor" label="Labornachweis">
+        <inputExpression><text>labor</text></inputExpression>
+      </input>
+      <input id="epi" label="Epidemiologie">
+        <inputExpression><text>epidemiologie</text></inputExpression>
+      </input>
+      <output id="kategorie" label="Kategorie" name="kategorie"/>
+      <output id="beschreibung" label="Beschreibung" name="beschreibung"/>
+
+      <rule>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>A</text></outputEntry>
+        <outputEntry><text>Entfällt.</text></outputEntry>
+      </rule>
+
+      <rule>
+        <inputEntry><text>"erfüllt"</text></inputEntry>
+        <inputEntry><text>"nicht erfüllt"</text></inputEntry>
+        <inputEntry><text>"erfüllt"</text></inputEntry>
+        <outputEntry><text>B</text></outputEntry>
+        <outputEntry><text>Klinisches Bild einer akuten Campylobacter-Enteritis, ohne labordiagnostischen Nachweis, aber mit epidemiologischer Bestätigung.</text></outputEntry>
+      </rule>
+
+      <rule>
+        <inputEntry><text>"erfüllt"</text></inputEntry>
+        <inputEntry><text>"erfüllt"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>C</text></outputEntry>
+        <outputEntry><text>Klinisches Bild einer akuten Campylobacter-Enteritis und labordiagnostischer Nachweis.</text></outputEntry>
+      </rule>
+
+      <rule>
+        <inputEntry><text>"nicht erfüllt"</text></inputEntry>
+        <inputEntry><text>"erfüllt"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>D</text></outputEntry>
+        <outputEntry><text>Labordiagnostischer Nachweis bei bekanntem klinischen Bild, das die Kriterien für eine akute Campylobacter-Enteritis nicht erfüllt. Hierunter fallen auch asymptomatische Infektionen.</text></outputEntry>
+      </rule>
+
+      <rule>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>"erfüllt"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>E</text></outputEntry>
+        <outputEntry><text>Labordiagnostischer Nachweis bei fehlenden Angaben zum klinischen Bild (nicht ermittelbar oder nicht erhoben).</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+  <inputData id="referenzdefinition" name="referenzdefinition" label="Referenzdefinition">
+    <documentation>In Veröffentlichungen des Robert Koch-Instituts, die nicht nach Falldefinitionskategorien differenzieren (z.B. wöchentliche „Aktuelle Statistik meldepflichtiger Infektionskrankheiten" im Epidemiologischen Bulletin), werden nur Erkrankungen der Kategorien B und C gezählt.</documentation>
+  </inputData>
+
+  <inputData id="meldepflicht" name="meldepflicht" label="Meldepflicht">
+    <documentation>Dem Gesundheitsamt wird gemäß § 7 Abs. 1 Nr. 6 IfSG der direkte oder indirekte Nachweis von darmpathogenem Campylobacter sp. soweit er auf eine akute Infektion hinweist, namentlich gemeldet. Darüber hinaus können allgemeine nicht erreger- oder krankheitsspezifische Meldepflichten bestehen (siehe Kapitel „Struktur der Falldefinitionen" > „Gesetzliche Grundlage").</documentation>
+  </inputData>
+
+  <inputData id="uebermittlung" name="uebermittlung" label="Übermittlung">
+    <documentation>Das Gesundheitsamt übermittelt gemäß § 11 Abs. 1 IfSG an die zuständige Landesbehörde nur Erkrankungs- oder Todesfälle und Erregernachweise, die der Falldefinition gemäß § 11 Abs. 2 IfSG entsprechen.</documentation>
+  </inputData>
+
+</definitions>

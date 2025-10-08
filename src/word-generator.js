@@ -1,5 +1,5 @@
 /**
- * Word document generation utilities
+ * Word document generation utilities for RKI Falldefinitionen
  */
 
 import {
@@ -13,31 +13,72 @@ import {
   AlignmentType,
   HeadingLevel,
   BorderStyle,
-  Packer
+  Packer,
+  UnderlineType
 } from 'docx';
 
-const BLUE_COLOR = '0070C0'; // Blue color for headings
+const BLUE_COLOR = '0563C1'; // RKI blue color for headings
 
 /**
- * Creates a heading paragraph
+ * Creates a blue heading paragraph (RKI style)
  * @param {string} text - Heading text
- * @param {HeadingLevel} level - Heading level
+ * @param {number} level - Heading level (1, 2, or 3)
  * @returns {Paragraph}
  */
-function createHeading(text, level = HeadingLevel.HEADING_1) {
+function createBlueHeading(text, level = 1) {
+  const sizes = { 1: 28, 2: 24, 3: 22 };
+  const headingLevels = { 1: HeadingLevel.HEADING_1, 2: HeadingLevel.HEADING_2, 3: HeadingLevel.HEADING_3 };
+
   return new Paragraph({
-    text,
-    heading: level,
+    children: [
+      new TextRun({
+        text,
+        bold: true,
+        color: BLUE_COLOR,
+        size: sizes[level]
+      })
+    ],
+    heading: headingLevels[level],
     spacing: {
-      before: 240,
-      after: 120,
-    },
-    style: 'Heading',
+      before: level === 1 ? 240 : 200,
+      after: 100,
+    }
   });
 }
 
 /**
- * Creates a paragraph with optional formatting
+ * Creates title paragraph (disease name in blue italic)
+ * @param {string} krankheit - Disease name
+ * @param {string} erreger - Pathogen name
+ * @returns {Paragraph}
+ */
+function createTitle(krankheit, erreger) {
+  return new Paragraph({
+    children: [
+      new TextRun({
+        text: krankheit,
+        bold: true,
+        italics: true,
+        color: BLUE_COLOR,
+        size: 28
+      }),
+      new TextRun({
+        text: ` (${erreger})`,
+        italics: true,
+        color: BLUE_COLOR,
+        size: 28
+      })
+    ],
+    heading: HeadingLevel.TITLE,
+    spacing: {
+      before: 0,
+      after: 200,
+    }
+  });
+}
+
+/**
+ * Creates a normal paragraph with optional formatting
  * @param {string|Array} content - Text content or array of TextRun objects
  * @param {Object} options - Formatting options
  * @returns {Paragraph}
@@ -50,178 +91,224 @@ function createParagraph(content, options = {}) {
   return new Paragraph({
     children,
     spacing: {
-      before: 120,
+      before: 0,
       after: 120,
+      line: 276, // 1.15 line spacing
     },
     ...options
   });
 }
 
 /**
- * Creates a decision table
- * @param {Object} decisionTable - Decision table data
- * @returns {Table}
+ * Creates a bullet point paragraph
+ * @param {string|Array} content - Text content or array of TextRun objects
+ * @param {number} level - Bullet level (0 = dash, 1 = bullet)
+ * @returns {Paragraph}
  */
-function createDecisionTable(decisionTable) {
-  if (!decisionTable) {
-    return null;
-  }
+function createBullet(content, level = 0) {
+  const children = typeof content === 'string'
+    ? [new TextRun(content)]
+    : content;
 
-  const { inputs, outputs, rules } = decisionTable;
-
-  // Create header row
-  const headerCells = [
-    ...inputs.map(input => new TableCell({
-      children: [new Paragraph({
-        children: [new TextRun({ text: input.label, bold: true })],
-        alignment: AlignmentType.CENTER,
-      })],
-      shading: { fill: 'D3D3D3' }
-    })),
-    ...outputs.map(output => new TableCell({
-      children: [new Paragraph({
-        children: [new TextRun({ text: output.label, bold: true })],
-        alignment: AlignmentType.CENTER,
-      })],
-      shading: { fill: 'D3D3D3' }
-    }))
-  ];
-
-  const headerRow = new TableRow({
-    children: headerCells,
-    tableHeader: true,
-  });
-
-  // Create data rows
-  const dataRows = rules.map(rule => {
-    const cells = [
-      ...rule.inputEntries.map(entry => new TableCell({
-        children: [new Paragraph(entry)],
-      })),
-      ...rule.outputEntries.map(entry => new TableCell({
-        children: [new Paragraph(entry)],
-      }))
-    ];
-    return new TableRow({ children: cells });
-  });
-
-  return new Table({
-    rows: [headerRow, ...dataRows],
-    width: {
-      size: 100,
-      type: WidthType.PERCENTAGE,
+  return new Paragraph({
+    children,
+    bullet: {
+      level: level
     },
-    borders: {
-      top: { style: BorderStyle.SINGLE, size: 1 },
-      bottom: { style: BorderStyle.SINGLE, size: 1 },
-      left: { style: BorderStyle.SINGLE, size: 1 },
-      right: { style: BorderStyle.SINGLE, size: 1 },
-      insideHorizontal: { style: BorderStyle.SINGLE, size: 1 },
-      insideVertical: { style: BorderStyle.SINGLE, size: 1 },
-    },
+    spacing: {
+      before: 0,
+      after: 80,
+      line: 276,
+    }
   });
 }
 
 /**
- * Generates Word document from DMN data
+ * Parses documentation text and creates formatted paragraphs
+ * @param {string} text - Documentation text
+ * @returns {Array<Paragraph>} Array of paragraphs
+ */
+function parseDocumentation(text) {
+  const paragraphs = [];
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+
+  for (const line of lines) {
+    // Check for bullet points starting with dash
+    if (line.startsWith('- ') || line.startsWith('• ')) {
+      const content = line.substring(2).trim();
+      paragraphs.push(createBullet(content, 0));
+    }
+    // Check for sub-bullets
+    else if (line.match(/^\s+[-•]/)) {
+      const content = line.replace(/^\s+[-•]\s*/, '').trim();
+      paragraphs.push(createBullet(content, 1));
+    }
+    // Regular paragraph
+    else {
+      // Check for bold keywords
+      const textRuns = [];
+      const boldKeywords = ['ODER', 'mindestens einer', 'mindestens eines', 'mindestens eine', 'definiert als'];
+      let currentText = line;
+
+      boldKeywords.forEach(keyword => {
+        if (currentText.includes(keyword)) {
+          const parts = currentText.split(keyword);
+          textRuns.push(new TextRun(parts[0]));
+          textRuns.push(new TextRun({ text: keyword, bold: true }));
+          currentText = parts.slice(1).join(keyword);
+        }
+      });
+
+      if (textRuns.length === 0) {
+        paragraphs.push(createParagraph(line));
+      } else {
+        textRuns.push(new TextRun(currentText));
+        paragraphs.push(createParagraph(textRuns));
+      }
+    }
+  }
+
+  return paragraphs;
+}
+
+/**
+ * Creates fall category sections (A, B, C, D, E)
+ * @param {Object} fallkategorien - Fall classification decision
+ * @returns {Array<Paragraph>} Array of paragraphs
+ */
+function createFallkategorien(fallkategorien) {
+  const paragraphs = [];
+
+  if (!fallkategorien || !fallkategorien.decisionTable) {
+    return paragraphs;
+  }
+
+  const { rules, outputs } = fallkategorien.decisionTable;
+
+  // Map output entries to category labels
+  const categories = {
+    'A': 'Klinisch diagnostizierte Erkrankung',
+    'B': 'Klinisch-epidemiologisch bestätigte Erkrankung',
+    'C': 'Klinisch-labordiagnostisch bestätigte Erkrankung',
+    'D': 'Labordiagnostisch nachgewiesene Infektion bei nicht erfülltem klinischen Bild',
+    'E': 'Labordiagnostisch nachgewiesene Infektion bei unbekanntem klinischen Bild'
+  };
+
+  rules.forEach((rule, index) => {
+    const categoryLetter = String.fromCharCode(65 + index); // A, B, C, D, E
+    const categoryLabel = categories[categoryLetter] || rule.outputEntries[0] || '';
+
+    paragraphs.push(
+      new Paragraph({
+        children: [
+          new TextRun({ text: `${categoryLetter}. `, bold: true }),
+          new TextRun({ text: categoryLabel, bold: true })
+        ],
+        spacing: { before: 120, after: 80 }
+      })
+    );
+
+    // Add description if available
+    if (rule.outputEntries.length > 1 && rule.outputEntries[1]) {
+      paragraphs.push(createParagraph(rule.outputEntries[1]));
+    }
+  });
+
+  return paragraphs;
+}
+
+/**
+ * Generates Word document from DMN data in RKI Falldefinition format
  * @param {Object} dmnData - Parsed DMN data
  * @returns {Promise<Blob>} Word document blob
  */
 export async function generateWordDocument(dmnData) {
-  const { metadata, inputData, decisions } = dmnData;
+  const {
+    metadata,
+    klinischesBild,
+    labordiagnostik,
+    epidemiologie,
+    fallkategorien,
+    zusatzinfo,
+    referenzdefinition,
+    gesetzlicheGrundlage
+  } = dmnData;
 
   const sections = [];
 
-  // Title and metadata
-  sections.push(
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: metadata.krankheit || 'Untitled',
-          bold: true,
-          size: 32,
-          color: BLUE_COLOR,
-        })
-      ],
-      spacing: { before: 0, after: 240 }
-    })
-  );
-
-  // Metadata section
-  if (metadata.erreger) {
-    sections.push(createParagraph([
-      new TextRun({ text: 'Erreger: ', bold: true }),
-      new TextRun({ text: metadata.erreger, italics: true })
-    ]));
+  // Title
+  if (metadata.krankheit && metadata.erreger) {
+    sections.push(createTitle(metadata.krankheit, metadata.erreger));
   }
 
-  if (metadata.stand) {
-    sections.push(createParagraph([
-      new TextRun({ text: 'Stand: ', bold: true }),
-      new TextRun(metadata.stand)
-    ]));
+  // Klinisches Bild
+  if (klinischesBild) {
+    sections.push(createBlueHeading('Klinisches Bild', 1));
+    sections.push(...parseDocumentation(klinischesBild.documentation || ''));
   }
 
-  if (metadata.version) {
-    sections.push(createParagraph([
-      new TextRun({ text: 'Version: ', bold: true }),
-      new TextRun(metadata.version)
-    ]));
+  // Labordiagnostischer Nachweis
+  if (labordiagnostik) {
+    sections.push(createBlueHeading('Labordiagnostischer Nachweis', 1));
+    sections.push(...parseDocumentation(labordiagnostik.documentation || ''));
   }
 
-  // Input Data section
-  if (inputData && inputData.length > 0) {
+  // Zusatzinformation (if present, goes after Labordiagnostik)
+  if (zusatzinfo && zusatzinfo.documentation) {
     sections.push(
       new Paragraph({
-        children: [new TextRun({ text: 'Eingabedaten', bold: true, color: BLUE_COLOR, size: 28 })],
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 360, after: 180 }
+        children: [new TextRun({ text: 'Zusatzinformation', bold: true })],
+        spacing: { before: 120, after: 80 }
       })
     );
+    sections.push(...parseDocumentation(zusatzinfo.documentation));
+  }
 
-    inputData.forEach(input => {
+  // Epidemiologische Bestätigung
+  if (epidemiologie) {
+    sections.push(createBlueHeading('Epidemiologische Bestätigung', 1));
+    sections.push(...parseDocumentation(epidemiologie.documentation || ''));
+
+    // Add Inkubationszeit if available
+    if (metadata.inkubationszeit) {
       sections.push(createParagraph([
-        new TextRun({ text: input.label || input.name, bold: true })
+        new TextRun({ text: 'Inkubationszeit ', italics: true }),
+        new TextRun(metadata.inkubationszeit)
       ]));
-
-      if (input.documentation) {
-        sections.push(createParagraph(input.documentation));
-      }
-    });
+    }
   }
 
-  // Decisions section
-  if (decisions && decisions.length > 0) {
+  // Über die zuständige Landesbehörde an das RKI zu übermittelnder Fall
+  sections.push(createBlueHeading('Über die zuständige Landesbehörde an das RKI zu übermittelnder Fall', 1));
+  sections.push(...createFallkategorien(fallkategorien));
+
+  // Referenzdefinition
+  if (referenzdefinition && referenzdefinition.documentation) {
+    sections.push(createBlueHeading('Referenzdefinition', 1));
+    sections.push(...parseDocumentation(referenzdefinition.documentation));
+  }
+
+  // Gesetzliche Grundlage
+  sections.push(createBlueHeading('Gesetzliche Grundlage', 1));
+
+  if (gesetzlicheGrundlage.meldepflicht) {
     sections.push(
       new Paragraph({
-        children: [new TextRun({ text: 'Entscheidungen', bold: true, color: BLUE_COLOR, size: 28 })],
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 360, after: 180 }
+        children: [new TextRun({ text: 'Meldepflicht', bold: true })],
+        spacing: { before: 100, after: 80 }
       })
     );
+    sections.push(...parseDocumentation(gesetzlicheGrundlage.meldepflicht.documentation || ''));
+  }
 
-    decisions.forEach(decision => {
-      sections.push(
-        new Paragraph({
-          children: [new TextRun({ text: decision.label || decision.name, bold: true, color: BLUE_COLOR, size: 24 })],
-          heading: HeadingLevel.HEADING_2,
-          spacing: { before: 240, after: 120 }
-        })
-      );
-
-      if (decision.documentation) {
-        sections.push(createParagraph(decision.documentation));
-      }
-
-      if (decision.decisionTable) {
-        const table = createDecisionTable(decision.decisionTable);
-        if (table) {
-          sections.push(new Paragraph({ text: '' })); // Spacing before table
-          sections.push(table);
-          sections.push(new Paragraph({ text: '' })); // Spacing after table
-        }
-      }
-    });
+  if (gesetzlicheGrundlage.uebermittlung) {
+    sections.push(
+      new Paragraph({
+        children: [new TextRun({ text: 'Übermittlung', bold: true })],
+        spacing: { before: 100, after: 80 }
+      })
+    );
+    sections.push(...parseDocumentation(gesetzlicheGrundlage.uebermittlung.documentation || ''));
   }
 
   // Create document
@@ -233,15 +320,20 @@ export async function generateWordDocument(dmnData) {
     styles: {
       paragraphStyles: [
         {
-          id: 'Heading',
-          name: 'Heading',
-          basedOn: 'Normal',
-          next: 'Normal',
+          id: 'Normal',
+          name: 'Normal',
           run: {
-            color: BLUE_COLOR,
-            bold: true,
+            font: 'Calibri',
+            size: 22, // 11pt
           },
-        },
+          paragraph: {
+            spacing: {
+              line: 276, // 1.15 line spacing
+              before: 0,
+              after: 120,
+            }
+          }
+        }
       ],
     },
   });

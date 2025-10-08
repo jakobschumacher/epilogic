@@ -4,18 +4,19 @@ Transform decision notation models (DMN 1.3) into formatted Word documents.
 
 ## Description
 
-Epilogic is a browser-based tool that converts DMN (Decision Model and Notation) XML files into professionally formatted Word documents. All processing happens client-side - no data is sent to any server.
+Epilogic is a browser-based tool that converts DMN (Decision Model and Notation) XML files into professionally formatted Word documents following the RKI Falldefinitionen format. All processing happens client-side - no data is sent to any server.
 
 ## Features
 
 - Upload DMN 1.3 files via drag-and-drop or file browser
 - Client-side validation and processing
-- Automatic Word document generation with:
-  - Blue headings (#0070C0)
-  - Italic disease names
-  - Bold emphasis for key terms
-  - Formatted decision tables
-  - Proper spacing and indentation
+- Automatic Word document generation in RKI Falldefinitionen format:
+  - Blue headings (#0563C1)
+  - Structured sections (Klinisches Bild, Labordiagnostischer Nachweis, etc.)
+  - Fall categories (A, B, C, D, E)
+  - Bold emphasis for key terms (ODER, mindestens einer)
+  - Proper bullet points and formatting
+  - Legal references (§ symbols)
 - Works completely offline after initial load
 - No data transmission to servers
 - Maximum file size: 10MB
@@ -61,7 +62,7 @@ The production bundle will be created in the `dist/` directory and is optimized 
 
 ## DMN Structure Requirements
 
-The tool expects DMN 1.3 files with the following structure:
+The tool expects DMN 1.3 files structured for RKI Falldefinitionen:
 
 ### Metadata (in extensionElements)
 
@@ -72,17 +73,26 @@ The tool expects DMN 1.3 files with the following structure:
     <rki:erreger>Pathogen Name</rki:erreger>
     <rki:stand>Date</rki:stand>
     <rki:version>Version</rki:version>
+    <rki:inkubationszeit>Incubation period</rki:inkubationszeit>
   </metadata>
 </dmn:extensionElements>
 ```
 
-### Required Elements
+### Required InputData Elements (by name attribute)
 
-- **Input Data**: Clinical criteria, laboratory methods, epidemiological factors
-- **Decisions**: Decision elements with decision tables
-- **Decision Tables**: Input/output definitions and rules
+- `klinisches_bild` - Clinical picture
+- `labordiagnostik` - Laboratory diagnostic evidence
+- `epidemiologische_bestaetigung` - Epidemiological confirmation
+- `zusatzinformation` - Additional information (optional)
+- `referenzdefinition` - Reference definition
+- `meldepflicht` - Reporting obligation
+- `uebermittlung` - Transmission
 
-See `test-data/sample.dmn` for a complete example.
+### Required Decision Element
+
+- `fallklassifikation` - Fall classification with decision table containing categories A-E
+
+See `test-data/campylobacter.dmn` for a complete RKI-format example.
 
 ## Project Structure
 

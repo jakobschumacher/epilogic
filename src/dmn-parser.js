@@ -1,5 +1,5 @@
 /**
- * DMN XML parsing utilities
+ * DMN XML parsing utilities for RKI Falldefinitionen
  */
 
 /**
@@ -16,7 +16,7 @@ export function extractMetadata(doc) {
   }
 
   // Extract all metadata fields
-  const fields = ['krankheit', 'erreger', 'stand', 'version'];
+  const fields = ['krankheit', 'erreger', 'stand', 'version', 'inkubationszeit'];
   fields.forEach(field => {
     const element = metadataElement.querySelector(field);
     if (element) {
@@ -25,6 +25,29 @@ export function extractMetadata(doc) {
   });
 
   return metadata;
+}
+
+/**
+ * Extracts structured section content from inputData
+ * Sections are identified by their name attribute
+ * @param {Document} doc - The parsed XML document
+ * @param {string} sectionName - Name of the section
+ * @returns {Object|null} Section object with label and documentation
+ */
+function extractSection(doc, sectionName) {
+  const element = doc.querySelector(`inputData[name="${sectionName}"]`);
+  if (!element) {
+    return null;
+  }
+
+  const label = element.getAttribute('label') || '';
+  const docElement = element.querySelector('documentation');
+  const documentation = docElement ? docElement.textContent.trim() : '';
+
+  return {
+    label,
+    documentation
+  };
 }
 
 /**
@@ -152,14 +175,22 @@ export function extractDecisions(doc) {
 }
 
 /**
- * Parses complete DMN document
+ * Parses complete DMN document for RKI Falldefinition
  * @param {Document} doc - The parsed XML document
  * @returns {Object} Complete DMN data structure
  */
 export function parseDMN(doc) {
   return {
     metadata: extractMetadata(doc),
-    inputData: extractInputData(doc),
-    decisions: extractDecisions(doc)
+    klinischesBild: extractSection(doc, 'klinisches_bild'),
+    labordiagnostik: extractSection(doc, 'labordiagnostik'),
+    epidemiologie: extractSection(doc, 'epidemiologische_bestaetigung'),
+    fallkategorien: extractDecisions(doc).find(d => d.name === 'fallklassifikation') || null,
+    zusatzinfo: extractSection(doc, 'zusatzinformation'),
+    referenzdefinition: extractSection(doc, 'referenzdefinition'),
+    gesetzlicheGrundlage: {
+      meldepflicht: extractSection(doc, 'meldepflicht'),
+      uebermittlung: extractSection(doc, 'uebermittlung')
+    }
   };
 }

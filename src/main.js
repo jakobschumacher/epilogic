@@ -16,6 +16,8 @@ const statusMessage = document.getElementById('statusMessage');
 const actionButtons = document.getElementById('actionButtons');
 const downloadWordBtn = document.getElementById('downloadWordBtn');
 const downloadMarkdownBtn = document.getElementById('downloadMarkdownBtn');
+const downloadCSharpBtn = document.getElementById('downloadCSharpBtn');
+const downloadJavaBtn = document.getElementById('downloadJavaBtn');
 
 // Global state to store parsed data
 let currentDmnData = null;
@@ -89,8 +91,11 @@ async function processFile(file) {
   console.log('Processing file:', file.name);
 
   try {
-    // Hide action buttons
-    actionButtons.style.display = 'none';
+    // Disable buttons during processing
+    downloadWordBtn.disabled = true;
+    downloadMarkdownBtn.disabled = true;
+    downloadCSharpBtn.disabled = true;
+    downloadJavaBtn.disabled = true;
 
     // Show validation status
     showStatus('Validating file...', 'loading');
@@ -117,15 +122,21 @@ async function processFile(file) {
     currentDmnData = dmnData;
     currentFilename = file.name.replace(/\.(dmn|xml)$/i, '');
 
-    // Show success and action buttons
+    // Show success and enable buttons
     showStatus('File processed successfully. Choose download format:', 'success');
-    actionButtons.style.display = 'flex';
+    downloadWordBtn.disabled = false;
+    downloadMarkdownBtn.disabled = false;
+    downloadCSharpBtn.disabled = false;
+    downloadJavaBtn.disabled = false;
     console.log('Document parsed successfully');
 
   } catch (error) {
     console.error('Processing error:', error);
     showStatus(`Error: ${error.message}`, 'error');
-    actionButtons.style.display = 'none';
+    downloadWordBtn.disabled = true;
+    downloadMarkdownBtn.disabled = true;
+    downloadCSharpBtn.disabled = true;
+    downloadJavaBtn.disabled = true;
   }
 }
 
@@ -144,7 +155,6 @@ async function handleWordDownload() {
     downloadDocument(blob, filename);
 
     showStatus(`Successfully generated ${filename}`, 'success');
-    actionButtons.style.display = 'flex';
 
   } catch (error) {
     console.error('Word generation error:', error);
@@ -167,12 +177,25 @@ function handleMarkdownDownload() {
     downloadMarkdown(markdown, filename);
 
     showStatus(`Successfully generated ${filename}`, 'success');
-    actionButtons.style.display = 'flex';
 
   } catch (error) {
     console.error('Markdown generation error:', error);
     showStatus(`Error: ${error.message}`, 'error');
   }
+}
+
+/**
+ * Handles C# code download (not implemented yet)
+ */
+function handleCSharpDownload() {
+  alert('Not implemented yet');
+}
+
+/**
+ * Handles Java code download (not implemented yet)
+ */
+function handleJavaDownload() {
+  alert('Not implemented yet');
 }
 
 /**
@@ -219,6 +242,8 @@ uploadArea.addEventListener('drop', (e) => {
 // Action button listeners
 downloadWordBtn.addEventListener('click', handleWordDownload);
 downloadMarkdownBtn.addEventListener('click', handleMarkdownDownload);
+downloadCSharpBtn.addEventListener('click', handleCSharpDownload);
+downloadJavaBtn.addEventListener('click', handleJavaDownload);
 
 // Prevent default drag and drop behavior on the whole page
 document.addEventListener('dragover', (e) => {

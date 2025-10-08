@@ -212,6 +212,11 @@ footer {
   transition: all 0.2s ease;
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-primary {
   background-color: var(--primary-color);
   color: white;

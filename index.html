@@ -34,18 +34,27 @@
           </div>
           <div class="status-message" id="statusMessage"></div>
         </div>
-        <div class="action-buttons" id="actionButtons" style="display: none; margin-top: 1rem;">
-          <button id="downloadWordBtn" class="btn btn-primary">Download Word</button>
-          <button id="downloadMarkdownBtn" class="btn btn-secondary">Download Markdown (Tables Only)</button>
-        </div>
+      </div>
+
+      <div class="action-buttons" id="actionButtons">
+        <button id="downloadWordBtn" class="btn btn-primary" disabled>Download Word</button>
+        <button id="downloadMarkdownBtn" class="btn btn-secondary" disabled>Download Markdown</button>
+        <button id="downloadCSharpBtn" class="btn btn-secondary" disabled>Download C#-Code</button>
+        <button id="downloadJavaBtn" class="btn btn-secondary" disabled>Download Java</button>
       </div>
 
       <div class="info-section">
         <h2>How it works</h2>
         <ol>
-          <li>Upload your DMN 1.3 file</li>
+          <li>Upload your DMN 1.3 file for RKI Falldefinitionen</li>
           <li>The file is validated and parsed</li>
-          <li>A formatted Word document is generated</li>
+          <li>Choose your desired export format:
+            <ul>
+              <li>Word - Full RKI Falldefinition document</li>
+              <li>Markdown - Decision tables only</li>
+              <li>C# / Java - Code generation (coming soon)</li>
+            </ul>
+          </li>
           <li>The document downloads automatically</li>
         </ol>
         <p class="privacy-note">All processing happens in your browser. No data is sent to any server.</p>

@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:dmn="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:rki="http://rki.de/schema/falldefinition/1.0" id="Campylobacter_Falldefinition" name="Campylobacter-Enteritis Falldefinition" namespace="http://rki.de/dmn/campylobacter" exporter="dmn-js (https://demo.bpmn.io/dmn)" exporterVersion="17.2.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <dmn:extensionElements>
+    <rki:metadata>
+      <rki:krankheit>Campylobacter-Enteritis</rki:krankheit>
+      <rki:erreger>Campylobacter spp., darmpathogen</rki:erreger>
+      <rki:icd10>A04.5</rki:icd10>
+      <rki:stand>01.09.2023</rki:stand>
+      <rki:version>Ausgabe 2023</rki:version>
+    </rki:metadata>
+  </dmn:extensionElements>
+  <dmn:inputData id="InputData_Bauchschmerzen" name="Bauchschmerzen">
+    <dmn:description>Abdominelle Schmerzen (Bauchschmerzen)</dmn:description>
+    <dmn:variable id="var_bauchschmerzen" name="bauchschmerzen" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_Durchfall" name="Durchfall">
+    <dmn:description>Mindestens 3 ungeformte Stühle in 24 Stunden</dmn:description>
+    <dmn:variable id="var_durchfall" name="durchfall" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_Fieber" name="Fieber">
+    <dmn:description>Körpertemperatur ≥38.5°C</dmn:description>
+    <dmn:variable id="var_fieber" name="fieber" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_KrankheitsbedingterTod" name="Krankheitsbedingter Tod">
+    <dmn:description>Tod, der durch die Krankheit verursacht wurde</dmn:description>
+    <dmn:variable id="var_krankheitsbedingter_tod" name="krankheitsbedingter_tod" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_AntigenNachweis" name="Antigennachweis">
+    <dmn:description>Direkter Erregernachweis mittels Antigennachweis (z.B. ELISA)</dmn:description>
+    <dmn:variable id="var_antigen_nachweis" name="antigen_nachweis" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_Kultur" name="Erregerisolierung (kulturell)">
+    <dmn:description>Isolierung und Kultivierung des Erregers aus klinischem Material</dmn:description>
+    <dmn:variable id="var_kultur" name="kultur" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_PCR" name="Nukleinsäurenachweis">
+    <dmn:description>Direkter Erregernachweis mittels Nukleinsäure-Nachweis (z.B. PCR)</dmn:description>
+    <dmn:variable id="var_pcr" name="pcr" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_MenschZuMensch" name="Mensch-zu-Mensch-Übertragung">
+    <dmn:description>Epidemiologischer Zusammenhang durch Übertragung von Mensch zu Mensch</dmn:description>
+    <dmn:variable id="var_mensch_zu_mensch" name="mensch_zu_mensch" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_GemeinsameQuelle" name="Gemeinsame Expositionsquelle">
+    <dmn:description>Epidemiologischer Zusammenhang durch gemeinsame Expositionsquelle (z.B. Tierkontakt, Lebensmittel)</dmn:description>
+    <dmn:variable id="var_gemeinsame_quelle" name="gemeinsame_quelle" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_KontaminiertesGewaesser" name="Kontaminiertes Gewässer">
+    <dmn:description>Epidemiologischer Zusammenhang durch Kontakt mit kontaminiertem Gewässer (Baden)</dmn:description>
+    <dmn:variable id="var_kontaminiertes_gewaesser" name="kontaminiertes_gewaesser" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_InfiziertesTier" name="Infiziertes Tier">
+    <dmn:description>Epidemiologischer Zusammenhang durch Kontakt mit infiziertem Tier oder Verzehr von Produkten infizierter Tiere</dmn:description>
+    <dmn:variable id="var_infiziertes_tier" name="infiziertes_tier" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:inputData id="InputData_KontaminiertesLebensmittel" name="Kontaminiertes Lebensmittel">
+    <dmn:description>Epidemiologischer Zusammenhang durch Verzehr von kontaminierten Lebensmitteln (einschließlich Trinkwasser)</dmn:description>
+    <dmn:variable id="var_kontaminiertes_lebensmittel" name="kontaminiertes_lebensmittel" typeRef="boolean" />
+  </dmn:inputData>
+  <dmn:decision id="clinical_picture" name="Klinisches Bild">
+    <dmn:informationRequirement id="req_clinical_1">
+      <dmn:requiredInput href="#InputData_Bauchschmerzen" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_clinical_2">
+      <dmn:requiredInput href="#InputData_Durchfall" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_clinical_3">
+      <dmn:requiredInput href="#InputData_Fieber" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_clinical_4">
+      <dmn:requiredInput href="#InputData_KrankheitsbedingterTod" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="DecisionTable_ClinicalPicture" hitPolicy="FIRST">
+      <dmn:input id="input_bauchschmerzen" label="Bauchschmerzen">
+        <dmn:inputExpression id="inputExpression_bauchschmerzen" typeRef="boolean">
+          <dmn:text>bauchschmerzen</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_durchfall" label="Durchfall">
+        <dmn:inputExpression id="inputExpression_durchfall" typeRef="boolean">
+          <dmn:text>durchfall</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_fieber" label="Fieber">
+        <dmn:inputExpression id="inputExpression_fieber" typeRef="boolean">
+          <dmn:text>fieber</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_krankheitsbedingter_tod" label="Krankheitsbedingter Tod">
+        <dmn:inputExpression id="inputExpression_krankheitsbedingter_tod" typeRef="boolean">
+          <dmn:text>krankheitsbedingter_tod</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="output_clinical_picture" label="Klinisches Bild erfüllt" name="clinical" typeRef="boolean" />
+      <dmn:rule id="clinical_rule_1">
+        <dmn:inputEntry id="clinical_inputEntry_1_1">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_1_2">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_1_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_1_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="clinical_outputEntry_1">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="clinical_rule_2">
+        <dmn:inputEntry id="clinical_inputEntry_2_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_2_2">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_2_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_2_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="clinical_outputEntry_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="clinical_rule_3">
+        <dmn:inputEntry id="clinical_inputEntry_3_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_3_2">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_3_3">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_3_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="clinical_outputEntry_3">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="clinical_rule_4">
+        <dmn:inputEntry id="clinical_inputEntry_4_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_4_2">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_4_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_4_4">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="clinical_outputEntry_4">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="clinical_rule_5">
+        <dmn:inputEntry id="clinical_inputEntry_5_1">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_5_2">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_5_3">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="clinical_inputEntry_5_4">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="clinical_outputEntry_5">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmn:decision id="lab_evidence" name="Labordiagnostischer Nachweis">
+    <dmn:description>Zusatzinformation:
+- Eine Kultivierung des Erregers und die Speziesbestimmung ist anzustreben.
+- Das Ergebnis der Speziesbestimmung sollte übermittelt werden.</dmn:description>
+    <dmn:informationRequirement id="req_lab_1">
+      <dmn:requiredInput href="#InputData_AntigenNachweis" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_lab_2">
+      <dmn:requiredInput href="#InputData_Kultur" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_lab_3">
+      <dmn:requiredInput href="#InputData_PCR" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="DecisionTable_LabEvidence" hitPolicy="FIRST">
+      <dmn:input id="input_antigen_nachweis" label="Antigennachweis">
+        <dmn:inputExpression id="inputExpression_antigen_nachweis" typeRef="boolean">
+          <dmn:text>antigen_nachweis</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_kultur" label="Erregerisolierung">
+        <dmn:inputExpression id="inputExpression_kultur" typeRef="boolean">
+          <dmn:text>kultur</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_pcr" label="Nukleinsäurenachweis">
+        <dmn:inputExpression id="inputExpression_pcr" typeRef="boolean">
+          <dmn:text>pcr</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="output_lab_evidence" label="Labordiagnostischer Nachweis erfüllt" name="lab" typeRef="boolean" />
+      <dmn:rule id="lab_rule_1">
+        <dmn:inputEntry id="lab_inputEntry_1_1">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_1_2">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_1_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="lab_outputEntry_1">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="lab_rule_2">
+        <dmn:inputEntry id="lab_inputEntry_2_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_2_2">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_2_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="lab_outputEntry_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="lab_rule_3">
+        <dmn:inputEntry id="lab_inputEntry_3_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_3_2">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_3_3">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="lab_outputEntry_3">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="lab_rule_4">
+        <dmn:inputEntry id="lab_inputEntry_4_1">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_4_2">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="lab_inputEntry_4_3">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="lab_outputEntry_4">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmn:decision id="epi_confirmation" name="Epidemiologische Bestätigung">
+    <dmn:description>Inkubationszeit: 1 - 10 Tage, gewöhnlich 2 - 5 Tage.</dmn:description>
+    <dmn:informationRequirement id="req_epi_1">
+      <dmn:requiredInput href="#InputData_MenschZuMensch" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_epi_2">
+      <dmn:requiredInput href="#InputData_GemeinsameQuelle" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_epi_3">
+      <dmn:requiredInput href="#InputData_KontaminiertesGewaesser" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_epi_4">
+      <dmn:requiredInput href="#InputData_InfiziertesTier" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_epi_5">
+      <dmn:requiredInput href="#InputData_KontaminiertesLebensmittel" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="DecisionTable_EpiConfirmation" hitPolicy="FIRST">
+      <dmn:input id="input_mensch_zu_mensch" label="Mensch-zu-Mensch">
+        <dmn:inputExpression id="inputExpression_mensch_zu_mensch" typeRef="boolean">
+          <dmn:text>mensch_zu_mensch</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_kontaminiertes_gewaesser" label="Kontaminiertes Gewässer">
+        <dmn:inputExpression id="inputExpression_kontaminiertes_gewaesser" typeRef="boolean">
+          <dmn:text>kontaminiertes_gewaesser</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_infiziertes_tier" label="Infiziertes Tier">
+        <dmn:inputExpression id="inputExpression_infiziertes_tier" typeRef="boolean">
+          <dmn:text>infiziertes_tier</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_kontaminiertes_lebensmittel" label="Kontaminiertes Lebensmittel">
+        <dmn:inputExpression id="inputExpression_kontaminiertes_lebensmittel" typeRef="boolean">
+          <dmn:text>kontaminiertes_lebensmittel</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="output_epi_confirmation" label="Epidemiologische Bestätigung erfüllt" name="epi" typeRef="boolean" />
+      <dmn:rule id="epi_rule_1">
+        <dmn:inputEntry id="epi_inputEntry_1_1">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_1_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_1_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_1_5">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="epi_outputEntry_1">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="epi_rule_2">
+        <dmn:inputEntry id="epi_inputEntry_2_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_2_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_2_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_2_5">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="epi_outputEntry_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="epi_rule_3">
+        <dmn:inputEntry id="epi_inputEntry_3_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_3_3">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_3_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_3_5">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="epi_outputEntry_3">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="epi_rule_4">
+        <dmn:inputEntry id="epi_inputEntry_4_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_4_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_4_4">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_4_5">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="epi_outputEntry_4">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="epi_rule_5">
+        <dmn:inputEntry id="epi_inputEntry_5_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_5_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_5_4">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_5_5">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="epi_outputEntry_5">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="epi_rule_6">
+        <dmn:inputEntry id="epi_inputEntry_6_1">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_6_3">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_6_4">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="epi_inputEntry_6_5">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="epi_outputEntry_6">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmn:decision id="campylobacter_classification" name="Übermittlungsdefinition und Referenzdefinition">
+    <dmn:informationRequirement id="req_clinical">
+      <dmn:requiredDecision href="#clinical_picture" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_lab">
+      <dmn:requiredDecision href="#lab_evidence" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="req_epi">
+      <dmn:requiredDecision href="#epi_confirmation" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="DecisionTable_CampylobacterClassification" hitPolicy="FIRST">
+      <dmn:input id="input_clinical" label="Klinisches Bild">
+        <dmn:inputExpression id="inputExpression_1" typeRef="boolean">
+          <dmn:text>clinical</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_lab" label="Labordiagnostischer Nachweis">
+        <dmn:inputExpression id="inputExpression_2" typeRef="boolean">
+          <dmn:text>lab</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="input_epi" label="Epidemiologische Bestätigung">
+        <dmn:inputExpression id="inputExpression_3" typeRef="boolean">
+          <dmn:text>epi</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="output_category" label="Fallkategorie" name="category" typeRef="string" />
+      <dmn:output id="output_transmit" label="Übermittlungsdefinition" name="transmit" typeRef="boolean" />
+      <dmn:output id="OutputClause_0v8sf8k" label="Referenzdefinition" typeRef="string" />
+      <dmn:rule id="rule_1">
+        <dmn:inputEntry id="inputEntry_1_1">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_1_2">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_1_3">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="outputEntry_1_1">
+          <dmn:text>"A"</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="outputEntry_1_2">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_0327v68">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="rule_2">
+        <dmn:inputEntry id="inputEntry_2_1">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_2_2">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_2_3">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="outputEntry_2_1">
+          <dmn:text>"B"</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="outputEntry_2_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_1e9it4g">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="rule_3">
+        <dmn:inputEntry id="inputEntry_3_1">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_3_2">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_3_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="outputEntry_3_1">
+          <dmn:text>"C"</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="outputEntry_3_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_17yp3ab">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="rule_4">
+        <dmn:inputEntry id="inputEntry_4_1">
+          <dmn:text>false</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_4_2">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_4_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="outputEntry_4_1">
+          <dmn:text>"D"</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="outputEntry_4_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_0vz6lom">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="rule_5">
+        <dmn:inputEntry id="inputEntry_5_1">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_5_2">
+          <dmn:text>true</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="inputEntry_5_3">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="outputEntry_5_1">
+          <dmn:text>"E"</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="outputEntry_5_2">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_0zjkmo4">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="DecisionRule_0kadbgl">
+        <dmn:inputEntry id="UnaryTests_0whju7q">
+          <dmn:text></dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="UnaryTests_1happu5">
+          <dmn:text></dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="UnaryTests_0qgzixt">
+          <dmn:text></dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="LiteralExpression_14s4itr">
+          <dmn:text></dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_19yh7ba">
+          <dmn:text></dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="LiteralExpression_1ua995k">
+          <dmn:text></dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_Campylobacter">
+      <dmndi:DMNShape id="DMNShape_clinical_picture" dmnElementRef="clinical_picture">
+        <dc:Bounds height="80" width="180" x="330" y="370" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_lab_evidence" dmnElementRef="lab_evidence">
+        <dc:Bounds height="80" width="180" x="820" y="360" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_epi_confirmation" dmnElementRef="epi_confirmation">
+        <dc:Bounds height="80" width="180" x="1291" y="370" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_campylobacter_classification" dmnElementRef="campylobacter_classification">
+        <dc:Bounds height="80" width="180" x="820" y="540" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_req_clinical" dmnElementRef="req_clinical">
+        <di:waypoint x="420" y="450" />
+        <di:waypoint x="865" y="520" />
+        <di:waypoint x="865" y="540" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_req_lab" dmnElementRef="req_lab">
+        <di:waypoint x="910" y="440" />
+        <di:waypoint x="910" y="520" />
+        <di:waypoint x="910" y="540" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_req_epi" dmnElementRef="req_epi">
+        <di:waypoint x="1381" y="450" />
+        <di:waypoint x="955" y="520" />
+        <di:waypoint x="955" y="540" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</dmn:definitions>

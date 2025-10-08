@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="definitions_1uk23up" name="definitions" namespace="http://camunda.org/schema/1.0/dmn" exporter="dmn-js (https://demo.bpmn.io/dmn)" exporterVersion="17.2.0">
+  <decision id="Decision_1jz1z0e" name="COVID-19">
+    <decisionTable id="DecisionTable_1thqq40" hitPolicy="FIRST">
+      <input id="InputClause_1r2ctci" label="Antigenkontakte">
+        <inputExpression id="LiteralExpression_0zy9wil" typeRef="number" />
+      </input>
+      <input id="InputClause_1qlzf4c" label="Impfung">
+        <inputExpression id="LiteralExpression_0wcvlvg" typeRef="number">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_02y5sf0" label="Impfung diesen Herbst">
+        <inputExpression id="LiteralExpression_06scaa5" typeRef="number">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_13q9o3r" label="Alter">
+        <inputExpression id="LiteralExpression_0gyt0xg" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1rblaon" label="Schwangerschaft oder Gebärfähig">
+        <inputExpression id="LiteralExpression_0hf6w0y" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1efk06g" label="Pflegeeinrichtung">
+        <inputExpression id="LiteralExpression_0t71jl2" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0pf5p3h" label="Gesundheitliche Gefährdung">
+        <inputExpression id="LiteralExpression_1jil0mx" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_06whipu" label="Familie und Kontakte von Immungeschwächten">
+        <inputExpression id="LiteralExpression_1xgeykz" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1fo4bjk" label="Personal in med Einrichtungen">
+        <inputExpression id="LiteralExpression_0w21287" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1l7l0qc" label="Abstand Vorimpfung">
+        <inputExpression id="LiteralExpression_1d51yi6" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_139qjyf" label="Impfung notwendig" typeRef="string" />
+      <output id="OutputClause_1xeaddo" label="Kategorie" typeRef="string" />
+      <rule id="DecisionRule_08ydog4">
+        <inputEntry id="UnaryTests_1p7is17">
+          <text>&lt;3</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ehqgoj">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1v5ivo0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09hb0pi">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x3svtz">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0exw5h9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03r6paz">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1q8pv11">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0uxb2lk">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vf4id2">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0gwnnqe">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_077c2sr">
+          <text>Standardimpfung</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1lrrv55">
+        <inputEntry id="UnaryTests_01d57mv">
+          <text>&lt;3</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ociizx">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rf6ace">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01ns16w">
+          <text>18-59</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11koj1w">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ye2wof">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06i51ro">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_152wx1d">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0blyng5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_159ps14">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1vdfzsk">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0sz215f">
+          <text>Standardimpfung</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1ogwrqc">
+        <inputEntry id="UnaryTests_0qrx728">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mkl8n9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mi2dg7">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12gcr98">
+          <text>&gt;=60</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05o67x8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0eyoyk8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_15z6fjx">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ilpqdj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08pr4jd">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00fmu5f">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1j6xhs1">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1rqmile">
+          <text>Standardimpfung</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_062x6gq">
+        <inputEntry id="UnaryTests_0kn2ufv">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0m2agbr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vowtz5">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kbqt0o">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_101l792">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0eehk7i">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_15t60sx">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1r2x1sv">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_172wo27">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xybiis">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1a112zs">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_134kim6">
+          <text>Indikationsimpfung</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_04hxqha">
+        <inputEntry id="UnaryTests_0np9che">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1r6y5pm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0t7i0d1">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0pqw757">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16w9rxp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xxaolr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1gbocqr">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0s35kit">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0g95y2f">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1nlwpz4">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ov5lgt">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0n9ymly">
+          <text>Indikationsimpfung</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13duq53">
+        <inputEntry id="UnaryTests_0z0p05r">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00br6ey">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1srtw51">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1fwm0ic">
+          <text>&gt;5 Monate</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1w0ofwu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vbj7tk">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_04vv0r8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0o2dqbr">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sokw7p">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09e9rlp">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1wfxqgx">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gckkp0">
+          <text>Indikationsimpfung</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_06j5uua">
+        <inputEntry id="UnaryTests_1fek7vi">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0avffs5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ri5n2n">
+          <text>&lt;1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_17yvclr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1og53pn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19igfba">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vgg2k0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1y4kh02">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0h3d9fj">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13vosqp">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_19cuh77">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1a58ypo">
+          <text>Berufliche_Impfung</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_1xg835g">
+      <dmndi:DMNShape id="DMNShape_1ugkath" dmnElementRef="Decision_1jz1z0e">
+        <dc:Bounds height="80" width="180" x="140" y="230" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

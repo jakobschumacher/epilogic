@@ -46,6 +46,20 @@
       <div class="info-section">
         <h2>How it works</h2>
         <ol>
+          <li>Create your DMN file with <a href="https://demo.bpmn.io/dmn" target="_blank">https://demo.bpmn.io/dmn</a></li>
+          <li>Add descriptions to your decision elements and input data</li>
+          <li>Add required metadata in extensionElements:
+            <ul>
+              <li><strong>Required:</strong> krankheit, erreger, stand, version</li>
+              <li><strong>Optional:</strong> inkubationszeit</li>
+            </ul>
+          </li>
+          <li>Add optional input data elements:
+            <ul>
+              <li>klinisches_bild, labordiagnostik, epidemiologische_bestaetigung</li>
+              <li>zusatzinformation, referenzdefinition, meldepflicht, uebermittlung</li>
+            </ul>
+          </li>
           <li>Upload your DMN 1.3 file for RKI Falldefinitionen</li>
           <li>The file is validated and parsed</li>
           <li>Choose your desired export format:

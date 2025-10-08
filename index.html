@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epilogic - DMN to Word Converter</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Epilogic</h1>
+      <p class="subtitle">Transform decision notation models into formatted documents</p>
+    </header>
+
+    <main>
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-content">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p class="upload-text">Drop your DMN file here or click to browse</p>
+          <p class="upload-hint">Supported formats: .dmn, .xml (max 10MB)</p>
+          <input type="file" id="fileInput" accept=".dmn,.xml" hidden>
+        </div>
+      </div>
+
+      <div class="status-area" id="statusArea" style="display: none;">
+        <div class="status-content">
+          <div class="status-icon" id="statusIcon">
+            <!-- Icon will be inserted by JavaScript -->
+          </div>
+          <div class="status-message" id="statusMessage"></div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h2>How it works</h2>
+        <ol>
+          <li>Upload your DMN 1.3 file</li>
+          <li>The file is validated and parsed</li>
+          <li>A formatted Word document is generated</li>
+          <li>The document downloads automatically</li>
+        </ol>
+        <p class="privacy-note">All processing happens in your browser. No data is sent to any server.</p>
+      </div>
+    </main>
+
+    <footer>
+      <p>Epilogic v1.2.0</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

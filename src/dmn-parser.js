@@ -1,0 +1,165 @@
+/**
+ * DMN XML parsing utilities
+ */
+
+/**
+ * Extracts metadata from DMN extensionElements
+ * @param {Document} doc - The parsed XML document
+ * @returns {Object} Metadata object
+ */
+export function extractMetadata(doc) {
+  const metadata = {};
+
+  const metadataElement = doc.querySelector('extensionElements metadata');
+  if (!metadataElement) {
+    return metadata;
+  }
+
+  // Extract all metadata fields
+  const fields = ['krankheit', 'erreger', 'stand', 'version'];
+  fields.forEach(field => {
+    const element = metadataElement.querySelector(field);
+    if (element) {
+      metadata[field] = element.textContent.trim();
+    }
+  });
+
+  return metadata;
+}
+
+/**
+ * Extracts input data elements from DMN
+ * @param {Document} doc - The parsed XML document
+ * @returns {Array} Array of input data objects
+ */
+export function extractInputData(doc) {
+  const inputDataElements = doc.querySelectorAll('inputData');
+  const inputData = [];
+
+  inputDataElements.forEach(element => {
+    const id = element.getAttribute('id') || '';
+    const name = element.getAttribute('name') || '';
+    const label = element.getAttribute('label') || name;
+
+    // Extract documentation if available
+    const docElement = element.querySelector('documentation');
+    const documentation = docElement ? docElement.textContent.trim() : '';
+
+    inputData.push({
+      id,
+      name,
+      label,
+      documentation
+    });
+  });
+
+  return inputData;
+}
+
+/**
+ * Extracts decision table from a decision element
+ * @param {Element} decisionElement - The decision element
+ * @returns {Object|null} Decision table object or null
+ */
+function extractDecisionTable(decisionElement) {
+  const decisionTable = decisionElement.querySelector('decisionTable');
+  if (!decisionTable) {
+    return null;
+  }
+
+  // Extract inputs
+  const inputs = [];
+  const inputElements = decisionTable.querySelectorAll('input');
+  inputElements.forEach(input => {
+    inputs.push({
+      id: input.getAttribute('id') || '',
+      label: input.getAttribute('label') || '',
+      expression: input.querySelector('inputExpression')?.textContent?.trim() || ''
+    });
+  });
+
+  // Extract outputs
+  const outputs = [];
+  const outputElements = decisionTable.querySelectorAll('output');
+  outputElements.forEach(output => {
+    outputs.push({
+      id: output.getAttribute('id') || '',
+      label: output.getAttribute('label') || '',
+      name: output.getAttribute('name') || ''
+    });
+  });
+
+  // Extract rules
+  const rules = [];
+  const ruleElements = decisionTable.querySelectorAll('rule');
+  ruleElements.forEach(rule => {
+    const inputEntries = [];
+    const inputEntryElements = rule.querySelectorAll('inputEntry');
+    inputEntryElements.forEach(entry => {
+      inputEntries.push(entry.querySelector('text')?.textContent?.trim() || '');
+    });
+
+    const outputEntries = [];
+    const outputEntryElements = rule.querySelectorAll('outputEntry');
+    outputEntryElements.forEach(entry => {
+      outputEntries.push(entry.querySelector('text')?.textContent?.trim() || '');
+    });
+
+    rules.push({
+      inputEntries,
+      outputEntries
+    });
+  });
+
+  return {
+    inputs,
+    outputs,
+    rules
+  };
+}
+
+/**
+ * Extracts decisions from DMN
+ * @param {Document} doc - The parsed XML document
+ * @returns {Array} Array of decision objects
+ */
+export function extractDecisions(doc) {
+  const decisionElements = doc.querySelectorAll('decision');
+  const decisions = [];
+
+  decisionElements.forEach(element => {
+    const id = element.getAttribute('id') || '';
+    const name = element.getAttribute('name') || '';
+    const label = element.getAttribute('label') || name;
+
+    // Extract documentation
+    const docElement = element.querySelector('documentation');
+    const documentation = docElement ? docElement.textContent.trim() : '';
+
+    // Extract decision table
+    const decisionTable = extractDecisionTable(element);
+
+    decisions.push({
+      id,
+      name,
+      label,
+      documentation,
+      decisionTable
+    });
+  });
+
+  return decisions;
+}
+
+/**
+ * Parses complete DMN document
+ * @param {Document} doc - The parsed XML document
+ * @returns {Object} Complete DMN data structure
+ */
+export function parseDMN(doc) {
+  return {
+    metadata: extractMetadata(doc),
+    inputData: extractInputData(doc),
+    decisions: extractDecisions(doc)
+  };
+}

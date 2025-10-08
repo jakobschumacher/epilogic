@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd"
+             xmlns:rki="http://rki.de/dmn/extensions"
+             id="hepatitis_a_definition"
+             name="Hepatitis A Fallklassifikation"
+             namespace="http://rki.de/dmn/hepatitis-a">
+
+  <extensionElements>
+    <metadata>
+      <rki:krankheit>Hepatitis A</rki:krankheit>
+      <rki:erreger>Hepatitis-A-Virus</rki:erreger>
+      <rki:stand>2024-01-15</rki:stand>
+      <rki:version>2.0</rki:version>
+    </metadata>
+  </extensionElements>
+
+  <inputData id="klinisches_bild" name="klinisches_bild" label="Klinisches Bild">
+    <documentation>
+      Akute Erkrankung mit Symptomen einer Hepatitis wie Ikterus, erhöhte Transaminasen (ALT, AST),
+      Cholestase-Parameter oder unspezifische Symptome wie Fieber, Müdigkeit, Übelkeit, Erbrechen,
+      Oberbauchbeschwerden.
+    </documentation>
+  </inputData>
+
+  <inputData id="labordiagnostik" name="labordiagnostik" label="Labordiagnostischer Nachweis">
+    <documentation>
+      Direkter oder indirekter Nachweis des Hepatitis-A-Virus durch molekularbiologische,
+      serologische oder kulturelle Verfahren.
+    </documentation>
+  </inputData>
+
+  <inputData id="epidemiologische_bestaetigung" name="epidemiologische_bestaetigung" label="Epidemiologische Bestätigung">
+    <documentation>
+      Epidemiologischer Zusammenhang durch Kontakt zu einem bestätigten Fall,
+      Aufenthalt in einem Endemiegebiet oder Verzehr kontaminierter Lebensmittel.
+    </documentation>
+  </inputData>
+
+  <decision id="klinisches_bild_entscheidung" name="klinisches_bild_entscheidung" label="Klinisches Bild Bewertung">
+    <documentation>Bewertung ob die klinischen Kriterien erfüllt sind</documentation>
+    <decisionTable>
+      <input id="symptome_input" label="Hepatitis-Symptome vorhanden">
+        <inputExpression>
+          <text>symptome</text>
+        </inputExpression>
+      </input>
+      <output id="klinisch_output" label="Klinisches Kriterium" name="klinisch_erfuellt"/>
+      <rule>
+        <inputEntry>
+          <text>"ja"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"erfüllt"</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>"nein"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"nicht erfüllt"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+  <decision id="labordiagnostik_entscheidung" name="labordiagnostik_entscheidung" label="Labordiagnostik Bewertung">
+    <documentation>Bewertung des labordiagnostischen Nachweises</documentation>
+    <decisionTable>
+      <input id="igm_input" label="IgM-Antikörper">
+        <inputExpression>
+          <text>igm</text>
+        </inputExpression>
+      </input>
+      <input id="pcr_input" label="PCR-Nachweis">
+        <inputExpression>
+          <text>pcr</text>
+        </inputExpression>
+      </input>
+      <output id="labor_output" label="Laborkriterium" name="labor_erfuellt"/>
+      <rule>
+        <inputEntry>
+          <text>"positiv"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"erfüllt"</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"positiv"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"erfüllt"</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>"negativ"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"negativ"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"nicht erfüllt"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+  <decision id="fallklassifikation" name="fallklassifikation" label="Fallklassifikation">
+    <documentation>
+      Endgültige Klassifikation des Falls gemäß Falldefinition.
+      Kategorie A: Klinisches Bild und Labornachweis erfüllt
+      Kategorie B: Klinisches Bild erfüllt, epidemiologische Bestätigung vorhanden
+      Kategorie C: Nur Labornachweis erfüllt
+      Kategorie D: Kein Fall
+    </documentation>
+    <decisionTable>
+      <input id="klinisch_input" label="Klinisches Bild">
+        <inputExpression>
+          <text>klinisch</text>
+        </inputExpression>
+      </input>
+      <input id="labor_input" label="Labornachweis">
+        <inputExpression>
+          <text>labor</text>
+        </inputExpression>
+      </input>
+      <input id="epi_input" label="Epidemiologische Bestätigung">
+        <inputExpression>
+          <text>epidemiologie</text>
+        </inputExpression>
+      </input>
+      <output id="kategorie_output" label="Fallkategorie" name="kategorie"/>
+      <output id="meldepflicht_output" label="Meldepflichtig" name="meldepflichtig"/>
+      <rule>
+        <inputEntry>
+          <text>"erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"A - Klinisch-labordiagnostisch bestätigter Fall"</text>
+        </outputEntry>
+        <outputEntry>
+          <text>"ja"</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>"erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"nicht erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"erfüllt"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"B - Klinisch-epidemiologisch bestätigter Fall"</text>
+        </outputEntry>
+        <outputEntry>
+          <text>"ja"</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>"nicht erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"C - Labordiagnostisch nachgewiesene Infektion"</text>
+        </outputEntry>
+        <outputEntry>
+          <text>"ja"</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>"nicht erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"nicht erfüllt"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"D - Kein Fall"</text>
+        </outputEntry>
+        <outputEntry>
+          <text>"nein"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+</definitions>
